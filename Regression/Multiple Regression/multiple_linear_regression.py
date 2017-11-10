@@ -11,13 +11,15 @@ X = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, 4].values
 
 # Encoding categorical data
+# creating 3 dumy variables(DV) of this categorical data
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder = LabelEncoder()
 X[:, 3] = labelencoder.fit_transform(X[:, 3])
 onehotencoder = OneHotEncoder(categorical_features = [3])
 X = onehotencoder.fit_transform(X).toarray()
 
-# Avoiding the Dummy Variable Trap
+# Avoiding the Dummy Variable Trap by eliminating 1 DV from the 3
+# just remember after encoding / creating the categorial data we have to eliminated ONE from created dumy variables
 X = X[:, 1:]
 
 # Splitting the dataset into the Training set and Test set
@@ -40,7 +42,21 @@ regressor.fit(X_train, y_train)
 # Predicting the Test set results
 y_pred = regressor.predict(X_test)
 
-# Building the optimal model using Backward Elimination
+
+# Building the optimal model 
+# Why we creates a model ? - to eliminate those variables from the dataset which don't have considerable effect on the predictions
+# Why we want to remove variables so ? - 1.Garbage in = Garbage out (too much variables makes the system less reliable & reduces performance)  2. At a high scale say in ppt in mnc it is not good when u are explaining all variables rather the most relevant ones
+
+# METHODS OF BUILDING MODELS
+# 1. All in
+# 2. Backward Elimination
+# 3. Forward Selection
+# 4. Bidirectional Elimination
+# 5. Score Comparison
+
+
+# Building the optimal model 
+#using Backward Elimination
 import statsmodels.formula.api as sm
 X = np.append(arr = np.ones((50, 1)).astype(int), values = X, axis = 1)
 X_opt = X[:, [0, 1, 2, 3, 4, 5]]
