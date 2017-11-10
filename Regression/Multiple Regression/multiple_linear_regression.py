@@ -20,7 +20,7 @@ X = onehotencoder.fit_transform(X).toarray()
 
 # Avoiding the Dummy Variable Trap by eliminating 1 DV from the 3
 # just remember after encoding / creating the categorial data we have to eliminated ONE from created dumy variables
-X = X[:, 1:]
+X = X[:, 1:] # the second argument (1:) means - all columns starting from index 1 to the end thus leaving the column at index 0
 
 # Splitting the dataset into the Training set and Test set
 from sklearn.cross_validation import train_test_split
@@ -55,14 +55,18 @@ y_pred = regressor.predict(X_test)
 # 5. Score Comparison
 
 
-# Building the optimal model 
-#using Backward Elimination
+"""
+# Building the optimal model using Backward Elimination
+
+"""
 import statsmodels.formula.api as sm
-X = np.append(arr = np.ones((50, 1)).astype(int), values = X, axis = 1)
-X_opt = X[:, [0, 1, 2, 3, 4, 5]]
-regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()
+X = np.append(arr = np.ones((50, 1)).astype(int), values = X, axis = 1) #adding columnof 1s to the dataset - why? => unlike other libraries(such as sklearn etc) statslearn do not take into account that there is B₀ in the equation thus we have to give X₀ (column of 1s) to it in order to have that b₀ coefficient's effect in our model
+
+# creating optimal matrix - X_opt which contains only those variables which have greater impact on the model
+X_opt = X[:, [0, 1, 2, 3, 4, 5]] #All in
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit() #endog & exog are predefined fns of OLS cls from statsmodel lib
 regressor_OLS.summary()
-X_opt = X[:, [0, 1, 3, 4, 5]]
+X_opt = X[:, [0, 1, 3, 4, 5]] #eliminated col_2 by as per its p value comparable to the significance level(by default 5%)
 regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()
 regressor_OLS.summary()
 X_opt = X[:, [0, 3, 4, 5]]
